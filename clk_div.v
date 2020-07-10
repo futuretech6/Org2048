@@ -32,6 +32,6 @@ module clk_div(input clk,
             clkdiv <= clkdiv + 1'b1;
     end
     
-    assign Clk_CPU = SW_Pause ? 0 : (SW2 ? clkdiv[24] : clkdiv[3]);
+    assign Clk_CPU = SW_Pause ? 0 : (SW2 ? clkdiv[23] : clkdiv[3]);
     
 endmodule

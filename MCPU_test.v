@@ -70,18 +70,17 @@ module MCPU_test;
         #50;
         
 		// Add stimulus here
-        Data_in = 32'h20080004;
+        Data_in = 32'h200803E0;
         #100;
         
-        Data_in = 32'h00084880;
+        Data_in = 32'h20090001;
         #100;
 
-        Data_in = 32'h000940C2;
+        Data_in = 32'had090000;
         #100;
-
-        //Data_in = 32'h0C000000;
-        Data_in = 32'h00000008;
-        #100;
+        
+        
+        
         
 	end
     always @*

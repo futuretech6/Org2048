@@ -1,11 +1,12 @@
 Init:
-    sll $r0, $r0, 0  # Score
-    sll $r0, $r0, 0  # isDead
+    sll $zero, $zero, 0  # Score
+    sll $zero, $zero, 0  # isDead
     # Set const
     lui $s1, 0xD000  # Addr for PS2
     addi $s3, $zero, 0xF0
-    addi $s4, $zero, 0x3C0  # 64B = 16W
-    addi $sp, $zero, 0x300
+    xor $s4, $s4, $s4
+    lui $s4, 0xF000
+    addi $sp, $zero, 0x400
     jal RandGen
 
 MainLoop:
@@ -97,11 +98,11 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
         addi $t1, $t1, -1
         beq $t1, $zero, Case_1Block
         addi $t1, $t1, -1
-        beq $t1, $zero, Case_2Block
+        beq $t1, $zero, Case_2Blocks
         addi $t1, $t1, -1
-        beq $t1, $zero, Case_3Block
+        beq $t1, $zero, Case_3Blocks
         addi $t1, $t1, -1
-        beq $t1, $zero, Case_4Block
+        beq $t1, $zero, Case_4Blocks
 
     Case_0Block:
         j Done_OGC
@@ -109,46 +110,56 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
     Case_1Block:
         j Done_OGC
         
-    Case_2Block:
+    Case_2Blocks:
         bne $a2, $a3, Done_OGC
         xor $a2, $a2, $a2
         addi $a3, $a3, 1
         j Case_1Block
         
-    Case_3Block:
-        bne $a1, $a2, C3_1ne2
-            xor $a1, $a1, $a1
-            addi $a2, $a2, 1
-        C3_1ne2:
-        
+    Case_3Blocks:
         bne $a2, $a3, C3_2ne3
             xor $a2, $a2, $a2
             addi $a3, $a3, 1
+            jal PushOneGroup
+            j Case_2Blocks
         C3_2ne3:
 
-        jal PushOneGroup
-        j Choose_BlockNum
+        bne $a1, $a2, C3_1ne2
+            xor $a1, $a1, $a1
+            addi $a2, $a2, 1
+            jal PushOneGroup
+            j Case_2Blocks
+        C3_1ne2:
 
-    Case_4Block:
-        bne $a0, $a1, C4_0ne1
-            xor $a0, $a0, $a0
-            addi $a1, $a1, 1
-        C4_0ne1:
+        j Done_OGC
+
+    Case_4Blocks:
+        bne $a2, $a3, C4_2ne3
+            xor $a2, $a2, $a2
+            addi $a3, $a3, 1
+            jal PushOneGroup
+            j Case_3Blocks
+        C4_2ne3:
 
         bne $a1, $a2, C4_1ne2
             xor $a1, $a1, $a1
             addi $a2, $a2, 1
+            jal PushOneGroup
+            j Case_3Blocks
         C4_1ne2:
-        
-        bne $a2, $a3, C4_2ne3
-            xor $a2, $a2, $a2
-            addi $a3, $a3, 1
-        C4_2ne3:
 
-        jal PushOneGroup
-        j Choose_BlockNum
+        bne $a0, $a1, C4_0ne1
+            xor $a0, $a0, $a0
+            addi $a1, $a1, 1
+            jal PushOneGroup
+            j Case_3Blocks
+        C4_0ne1:
+        
+        j Done_OGC
 
     Done_OGC:
+
+    # Save 4 blocks' data from a0~a3 to miobus
     sw $a3, 0($t2)
     sub $t2, $t2, $s6
     sw $a2, 0($t2)
@@ -170,11 +181,11 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
 
     addi $v0, $zero, 4
     loop1_POG:
-        bne $a3, $zero, Push2_POG
+        beq $a3, $zero, Push2_POG  # if Bi is empty, push B(i-1) to Bi
         Done2_POG:
-        bne $a2, $zero, Push1_POG
+        beq $a2, $zero, Push1_POG
         Done1_POG:
-        bne $a1, $zero, Push0_POG
+        beq $a1, $zero, Push0_POG
         Done0_POG:
         addi $v0, $v0, -1
         bne $v0, $zero, loop1_POG
@@ -182,15 +193,20 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
 
         Push2_POG:
             and $a3, $a2, $a2
+            xor $a2, $a2, $a2
+            j Done2_POG
         Push1_POG:
             and $a2, $a1, $a1
+            xor $a1, $a1, $a1
+            j Done1_POG
         Push0_POG:
             and $a2, $a1, $a1
+            xor $a0, $a0, $a0
+            j Done0_POG
     loop1Done_POG:
     # Count Block Num
-    xor $t1, $t1, $t1
     slt $t7, $zero, $a0
-    add $t1, $t1, $t7
+    add $t1, $zero, $t7
     slt $t7, $zero, $a1
     add $t1, $t1, $t7
     slt $t7, $zero, $a2
@@ -227,9 +243,6 @@ ThingsAfterMove:
 
     addi $s5, $s5, -16
     beq $s5, $zero, DeadLoop
-    DeadLoop:
-        sw $s4, 4($zero)
-        j DeadLoop
 
     jal RandGen
 
@@ -242,10 +255,10 @@ GetScore:
     # @ret: v1 = pow(2, t1), but 2^0 = 0(0 score for empty block)
     sw $ra, 0($sp)  # 0x99
     sw $v0, 4($sp)
-
-    xor $v1, $v1, $v1
-    beq $t1, $zero, Done_GS
     addi $sp, $sp, 8
+
+    xor $v1, $v1, $v1   # score = 0
+    beq $t1, $zero, Done_GS
 
     and $v0, $t1, $t1
     addi $v1, $zero, 1
@@ -279,3 +292,7 @@ RandGen:
     lw $ra, 0($sp)
     jr $ra
 # RandGen ends here
+
+DeadLoop:
+    sw $s4, 4($zero)
+    j DeadLoop

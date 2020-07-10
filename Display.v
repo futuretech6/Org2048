@@ -22,8 +22,8 @@ module Display(input rst,
                input isDead,
                input [31:0] clkdiv,
                input [15:0] SW_OK,
-               input [31:0] BlockType,
-               output [9:0] BlockID,   // From LeftBottom to RightTop
+               input [3:0] BlockType,
+               output [3:0] BlockID,   // From LeftBottom to RightTop
                output [3:0] VGA_R,
                output [3:0] VGA_G,
                output [3:0] VGA_B,
