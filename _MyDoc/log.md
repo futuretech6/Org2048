@@ -11,15 +11,25 @@
   * s0: const 0xC000, Rand
   * s1: const 0xD000, PS2
   * s2: the info of current key pressed
-  * s3: const 0xF0
-  * s4: const 0xF000000
-  * t9: Global rand ptr
-  * **GroupCompression:**
+  * s3: const 0x000000F0
+  * s4: const 0xF0000000
+  * **GroupsCompr:**
     * s5: First elem
     * s6: Dir Mark for next block in group
     * s7: Dir Mark for changing group
-    * t7: For keeping cur block's PHY ADDR
-    * s8: For $ra preserved
+    * t0: cur group's 1st elem PHY ADDR
+    * **OneGroupCompr**
+      * t0: cur group's 1st elem PHY ADDR
+      * ---
+      * t1: cur group's Block Num
+      * t2: cur block's PHY ADDR
+      * a0~3: block 0~3
+      * **PushOneGroup**
+        * t0: cur group's 1st elem PHY ADDR
+        * t1: cur group's block num
+        * a0~3: block 0~3
+        * ---
+        * v0: loop tmp
   * **ThingsAfterMove:**
     * NonEmpty count: s5
     * Score count: s6

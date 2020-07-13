@@ -42,17 +42,17 @@ module MIO_BUS(input clk,
                output reg GPIOe0000000_we,
                output reg counter_we,
                output reg [31:0] Peripheral_in);
-    
-    reg data_ram_rd,GPIOf0000000_rd,GPIOe0000000_rd,counter_rd,ps2kb_rd,rand_rd, block_rd;
-
+    reg data_ram_rd,GPIOf0000000_rd,GPIOe0000000_rd,counter_rd,ps2kb_rd,ps2kb_on,rand_rd, block_rd;
     reg [3:0] BlockInfo[0:15];// = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     reg [3:0] BlockType2CPU = 0;
-    
-    assign BlockType = {28'b0, BlockInfo[BlockID]};        
-
+    assign BlockType = {28'b0, BlockInfo[BlockID]};
+    initial begin
+        randCnt = 0;
+        ps2kb_on = 0;
+    end
     // Block Info
     integer i;
-    always @(*) begin
+    always @(posedge clk) begin
         if(rst)
             for (i = 0; i < 16; i = i + 1)
                 BlockInfo[i] <= 4'b0;
@@ -63,14 +63,9 @@ module MIO_BUS(input clk,
                 BlockType2CPU = BlockInfo[addr_bus[5:2]];  // CPU r
         end
     end
-    
+    reg [3:0] randCnt = 0;
     // Rand
     reg [3:0] myRand = 0;
-    reg [3:0] randCnt = 0;
-    initial begin
-        randCnt = 0;
-    end
-
     always @(*) begin
         if(~rand_rd) begin  // Won't change while assigning
             case(randCnt)
@@ -95,7 +90,6 @@ module MIO_BUS(input clk,
             randCnt = randCnt == 15 ? 0 : randCnt + 1;
         end
     end
-  
     // IO ctrl
     always @(*) begin
         data_ram_we     = 0;
@@ -109,6 +103,7 @@ module MIO_BUS(input clk,
         ram_addr        = 10'h0;
         ram_data_in     = 32'h0;
         Peripheral_in   = 32'h0;
+        // if(mem_w == 1'b0 || mem_w == 1'b1 && ps2kb_rd == 1'b1)
         ps2kb_rd        = 0; // Keyborad
         rand_rd         = 0; // Rand
         // block_we = 0;
@@ -120,17 +115,25 @@ module MIO_BUS(input clk,
                 ram_addr    = addr_bus[11:2];
                 ram_data_in = Cpu_data2bus;
                 data_ram_rd = ~mem_w;
+                // ps2kb_on = 0;
             end
             4'hC: begin  // get random.randint(0, 15)
                 rand_rd = ~mem_w;
+                // ps2kb_on = 0;
             end
             4'hD: begin  // keyborad
+                // if(ps2kb_on == 1'b0 && mem_w == 0)
                 ps2kb_rd = ~mem_w;
+                // ps2kb_on = ~mem_w;
             end
             4'hF: begin  // BlockInfo
                 // block_we = mem_w;
                 block_rd = ~mem_w;
+                // ps2kb_on = 0;
             end
+            // default: begin
+            //     ps2kb_on = 0;
+            // end
             // 4'hE: begin
             //     GPIOe0000000_we = mem_w;
             //     Peripheral_in   = Cpu_data2bus;
@@ -150,7 +153,6 @@ module MIO_BUS(input clk,
             // end
         endcase
     end
-
     // CPU read
     always @(posedge clk) begin
         casex({data_ram_rd, GPIOe0000000_rd, counter_rd, GPIOf0000000_rd, ps2kb_rd, rand_rd, block_rd})  /* Procedure */

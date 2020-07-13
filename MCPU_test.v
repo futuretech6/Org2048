@@ -79,6 +79,17 @@ module MCPU_test;
         Data_in = 32'had090000;
         #100;
         
+        Data_in = 32'h01095022;
+        #100;
+        
+        Data_in = 32'h3C11D000;
+        #100;
+        
+        Data_in = 32'h210BFFFF;
+        #100;
+        
+        Data_in = 32'h016B6024;
+        #100;
         
         
         

@@ -12,7 +12,7 @@ Init:
 MainLoop:
     lw $s2, 0($s1)
     beq $s2, $zero, MainLoop
-    beq $s2, $zero, MainLoop
+    beq $s2, $s3, MainLoop
 
     # FindDir
     addi $t0, $zero, 0x1D
@@ -34,26 +34,28 @@ MainLoop:
         addi $s5, $zero, 0
         addi $s6, $zero, 16
         addi $s7, $zero, 4
-        jal GroupsCompr
+        j PressedWSAD
 
     isDown:
         addi $s5, $zero, 48
         addi $s6, $zero, -16
         addi $s7, $zero, 4
-        jal GroupsCompr
+        j PressedWSAD
 
     isLeft:
         addi $s5, $zero, 12
         addi $s6, $zero, -4
         addi $s7, $zero, 16
-        jal GroupsCompr
+        j PressedWSAD
 
     isRight:
         addi $s5, $zero, 0
         addi $s6, $zero, 4
         addi $s7, $zero, 16
-        jal GroupsCompr
-
+        j PressedWSAD
+    
+    PressedWSAD:
+    jal GroupsCompr
     jal ThingsAfterMove
     j MainLoop
 # MainLoop ends here
@@ -62,27 +64,26 @@ GroupsCompr:
     sw $ra, 0($sp)
     addi $sp, $sp, 4
 
-    add $t0, $s5, $s4  # t0: cur group's 1st elem PHY ADDR
-    jal OneGroupCompr
+    add $t0, $s4, $s5  # t0: cur group's 1st elem PHY ADDR
+    jal ComprOneGroup
     add $t0, $t0, $s7
-    jal OneGroupCompr
+    jal ComprOneGroup
     add $t0, $t0, $s7
-    jal OneGroupCompr
+    jal ComprOneGroup
     add $t0, $t0, $s7
-    jal OneGroupCompr
+    jal ComprOneGroup
 
     addi $sp, $sp, -4
     lw $ra, 0($sp)
     jr $ra
 # GroupsCompr ends here
 
-
-OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
+ComprOneGroup:  # t0: cur group's 1st elem PHY ADDR
     sw $ra, 0($sp)
     addi $sp, $sp, 4
-    xor $t1, $t1, $t1  # t1: cur group's Block Num
-    and $t2, $t0, $t0  # t2: cur block's PHY ADDR
+
     # Load 4 blocks' data to a0~a3
+    and $t2, $t0, $t0  # t2: cur block's PHY ADDR
     lw $a0, 0($t2)
     add $t2, $t2, $s6
     lw $a1, 0($t2)
@@ -91,7 +92,7 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
     add $t2, $t2, $s6
     lw $a3, 0($t2)
 
-    jal PushOneGroup
+    jal PushOneGroup  # t1: cur group's Block Num
 
     Choose_BlockNum:
         beq $t1, $zero, Case_0Block
@@ -105,17 +106,17 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
         beq $t1, $zero, Case_4Blocks
 
     Case_0Block:
-        j Done_OGC
+        j Done_COG
 
     Case_1Block:
-        j Done_OGC
-        
+        j Done_COG
+
     Case_2Blocks:
-        bne $a2, $a3, Done_OGC
+        bne $a2, $a3, Done_COG
         xor $a2, $a2, $a2
         addi $a3, $a3, 1
         j Case_1Block
-        
+
     Case_3Blocks:
         bne $a2, $a3, C3_2ne3
             xor $a2, $a2, $a2
@@ -131,7 +132,7 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
             j Case_2Blocks
         C3_1ne2:
 
-        j Done_OGC
+        j Done_COG
 
     Case_4Blocks:
         bne $a2, $a3, C4_2ne3
@@ -154,24 +155,24 @@ OneGroupCompr:  # t0: cur group's 1st elem PHY ADDR
             jal PushOneGroup
             j Case_3Blocks
         C4_0ne1:
-        
-        j Done_OGC
 
-    Done_OGC:
+        j Done_COG
 
-    # Save 4 blocks' data from a0~a3 to miobus
+    Done_COG:
+
+    # Save 4 blocks' data from a3~a0 to miobus
     sw $a3, 0($t2)
     sub $t2, $t2, $s6
     sw $a2, 0($t2)
-    add $t2, $t2, $s6
+    sub $t2, $t2, $s6
     sw $a1, 0($t2)
-    add $t2, $t2, $s6
+    sub $t2, $t2, $s6
     sw $a0, 0($t2)
 
     addi $sp, $sp, -4
     lw $ra, 0($sp)
     jr $ra
-# OneGroupCompr ends here
+# ComprOneGroup ends here
 
 PushOneGroup:  # Jusr push(form 0 to 3), no compression
 # @param: t0: cur group's 1st elem PHY ADDR
@@ -179,14 +180,15 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
     sw $ra, 0($sp)
     addi $sp, $sp, 4
 
-    addi $v0, $zero, 4
-    loop1_POG:
-        beq $a3, $zero, Push2_POG  # if Bi is empty, push B(i-1) to Bi
+    addi $v0, $zero, 3  # max 3 pushes: 0->1->2->3
+    loop1_POG:  # if Bi is empty, push B(i-1) to Bi
+        beq $a3, $zero, Push2_POG
         Done2_POG:
         beq $a2, $zero, Push1_POG
         Done1_POG:
         beq $a1, $zero, Push0_POG
         Done0_POG:
+
         addi $v0, $v0, -1
         bne $v0, $zero, loop1_POG
         j loop1Done_POG
@@ -200,11 +202,12 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
             xor $a1, $a1, $a1
             j Done1_POG
         Push0_POG:
-            and $a2, $a1, $a1
+            and $a1, $a0, $a0
             xor $a0, $a0, $a0
             j Done0_POG
     loop1Done_POG:
     # Count Block Num
+    xor $t1, $t1, $t1
     slt $t7, $zero, $a0
     add $t1, $zero, $t7
     slt $t7, $zero, $a1
@@ -220,7 +223,7 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
 # PushOneGroup ends here
 
 ThingsAfterMove:
-    # get score an isDead
+    # get score and isDead
     sw $ra, 0($sp)
     addi $sp, $sp, 4
 
@@ -228,7 +231,7 @@ ThingsAfterMove:
     xor $s6, $s6, $s6  # Score
     addi $v0, $zero, 16
     and $t0, $s4, $s4  # t0: cur block's PHY ADDR
-    loop1_TAM:  # 0x89
+    loop1_TAM:
         lw $t1, 0($t0) # t1: cur block's data
         slt $t7, $zero, $t1
         add $s5, $s5, $t7
@@ -237,12 +240,13 @@ ThingsAfterMove:
         add $s6, $s6, $v1
 
         addi $v0, $v0, -1
+        addi $t0, $t0, 4
         bne $v0, $zero, loop1_TAM
-    
+
     sw $s6, 0($zero) # Store score
 
     addi $s5, $s5, -16
-    beq $s5, $zero, DeadLoop
+    beq $s5, $zero, DeadLoop  # 16 blocks after compr
 
     jal RandGen
 
@@ -253,7 +257,7 @@ ThingsAfterMove:
 
 GetScore:
     # @ret: v1 = pow(2, t1), but 2^0 = 0(0 score for empty block)
-    sw $ra, 0($sp)  # 0x99
+    sw $ra, 0($sp)
     sw $v0, 4($sp)
     addi $sp, $sp, 8
 
@@ -264,13 +268,13 @@ GetScore:
     addi $v1, $zero, 1
 
     beq $v0, $zero, Done_GS
-        sll $v1, $v1, 1 # 0x9f
+        sll $v1, $v1, 1
     Done_GS:
 
     addi $sp, $sp, -8
     lw $v0, 4($sp)
     lw $ra, 0($sp)
-    jr $ra  # 0xa3
+    jr $ra
 # GetScore ends here
 
 RandGen:
