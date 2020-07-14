@@ -12,17 +12,19 @@
   * s1: const 0xD000, PS2
   * s2: the info of current key pressed
   * s3: const 0x000000F0
+  * s3: score, -1 for dead
   * s4: const 0xF0000000
   * **GroupsCompr:**
     * s5: First elem
     * s6: Dir Mark for next block in group
     * s7: Dir Mark for changing group
     * t0: cur group's 1st elem PHY ADDR
-    * **OneGroupCompr**
+    * **ComprOneGroup**
       * t0: cur group's 1st elem PHY ADDR
       * ---
       * t1: cur group's Block Num
       * t2: cur block's PHY ADDR
+      * t3: the num that has been compressed yet
       * a0~3: block 0~3
       * **PushOneGroup**
         * t0: cur group's 1st elem PHY ADDR
@@ -73,3 +75,11 @@ end
 就正常了，合理怀疑是因为ISE为了防止出现读写锁存把他优化掉了
 
 另外，写的时候不能`if (block_we) begin`，因为可能已经不是对方块进行的IO了而block_we还没反应过来，这样一次会有好多个块的信息一起被修改成同一个信息（因为addr_bus此时已跳转）。改成`if (block_we && addr_bus[31:28] == 4'hF) begin`就好了
+
+不合并的只动一格的问题
+
+会合并的跳过的问题
+
+新生成的2覆盖旧的的问题
+
+PCReg跳转是zero ^ Branch不是zero & Branch

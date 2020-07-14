@@ -70,10 +70,10 @@ module MCPU_test;
         #50;
         
 		// Add stimulus here
-        Data_in = 32'h200803E0;
+        Data_in = 32'h20030001;
         #100;
         
-        Data_in = 32'h20090001;
+        Data_in = 32'h00031840;
         #100;
 
         Data_in = 32'had090000;
@@ -81,7 +81,7 @@ module MCPU_test;
         
         Data_in = 32'h01095022;
         #100;
-        
+        // 500ns
         Data_in = 32'h3C11D000;
         #100;
         
@@ -89,6 +89,9 @@ module MCPU_test;
         #100;
         
         Data_in = 32'h016B6024;
+        #100;
+        // 800ns
+        Data_in = 32'h158BFFF7;
         #100;
         
         

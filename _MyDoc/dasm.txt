@@ -1,194 +1,225 @@
  1 (R-type) [0x00000000] nop 
  2 (R-type) [0x00000000] nop 
  3 (I-type) [0x3c11d000] lui $s1, -12288
- 4 (I-type) [0x201300f0] addi $s3, $zero, 240
- 5 (R-type) [0x0294a026] xor $s4, $s4, $s4
- 6 (I-type) [0x3c14f000] lui $s4, -4096
- 7 (I-type) [0x201d0400] addi $sp, $zero, 1024
- 8 (J-type) [0x0c0000b3] jal 0xb3
- 9 (I-type) [0x8e320000] lw $s2, 0($s1)
- a (I-type) [0x1012fffe] beq $zero, $s2, -2
- b (I-type) [0x1272fffd] beq $s3, $s2, -3
- c (I-type) [0x2008001d] addi $t0, $zero, 29
- d (I-type) [0x11120007] beq $t0, $s2, 7
- e (I-type) [0x2008001b] addi $t0, $zero, 27
- f (I-type) [0x11120009] beq $t0, $s2, 9
-10 (I-type) [0x2008001c] addi $t0, $zero, 28
-11 (I-type) [0x1112000b] beq $t0, $s2, 11
-12 (I-type) [0x20080023] addi $t0, $zero, 35
-13 (I-type) [0x1112000d] beq $t0, $s2, 13
-14 (J-type) [0x08000008] j 0x8
-15 (I-type) [0x20150000] addi $s5, $zero, 0
-16 (I-type) [0x20160010] addi $s6, $zero, 16
-17 (I-type) [0x20170004] addi $s7, $zero, 4
-18 (J-type) [0x08000024] j 0x24
-19 (I-type) [0x20150030] addi $s5, $zero, 48
-1a (I-type) [0x2016fff0] addi $s6, $zero, -16
-1b (I-type) [0x20170004] addi $s7, $zero, 4
-1c (J-type) [0x08000024] j 0x24
-1d (I-type) [0x2015000c] addi $s5, $zero, 12
-1e (I-type) [0x2016fffc] addi $s6, $zero, -4
-1f (I-type) [0x20170010] addi $s7, $zero, 16
-20 (J-type) [0x08000024] j 0x24
-21 (I-type) [0x20150000] addi $s5, $zero, 0
-22 (I-type) [0x20160004] addi $s6, $zero, 4
-23 (I-type) [0x20170010] addi $s7, $zero, 16
-24 (J-type) [0x08000024] j 0x24
-25 (J-type) [0x0c000027] jal 0x27
-26 (J-type) [0x0c000091] jal 0x91
-27 (J-type) [0x08000008] j 0x8
-28 (I-type) [0xafbf0000] sw $ra, 0($sp)
-29 (I-type) [0x23bd0004] addi $sp, $sp, 4
-2a (R-type) [0x02954020] add $t0, $s4, $s5
-2b (J-type) [0x0c000034] jal 0x34
-2c (R-type) [0x01174020] add $t0, $t0, $s7
-2d (J-type) [0x0c000034] jal 0x34
-2e (R-type) [0x01174020] add $t0, $t0, $s7
-2f (J-type) [0x0c000034] jal 0x34
-30 (R-type) [0x01174020] add $t0, $t0, $s7
-31 (J-type) [0x0c000034] jal 0x34
-32 (I-type) [0x23bdfffc] addi $sp, $sp, -4
-33 (I-type) [0x8fbf0000] lw $ra, 0($sp)
-34 (R-type) [0x03e00008] jr $ra
-35 (I-type) [0xafbf0000] sw $ra, 0($sp)
-36 (I-type) [0x23bd0004] addi $sp, $sp, 4
-37 (R-type) [0x01085024] and $t2, $t0, $t0
-38 (I-type) [0x8d440000] lw $a0, 0($t2)
-39 (R-type) [0x01565020] add $t2, $t2, $s6
-3a (I-type) [0x8d450000] lw $a1, 0($t2)
-3b (R-type) [0x01565020] add $t2, $t2, $s6
-3c (I-type) [0x8d460000] lw $a2, 0($t2)
-3d (R-type) [0x01565020] add $t2, $t2, $s6
-3e (I-type) [0x8d470000] lw $a3, 0($t2)
-3f (J-type) [0x0c000073] jal 0x73
-40 (I-type) [0x10090008] beq $zero, $t1, 8
-41 (I-type) [0x2129ffff] addi $t1, $t1, -1
-42 (I-type) [0x10090007] beq $zero, $t1, 7
-43 (I-type) [0x2129ffff] addi $t1, $t1, -1
-44 (I-type) [0x10090006] beq $zero, $t1, 6
+ 4 (R-type) [0x02739826] xor $s3, $s3, $s3
+ 5 (I-type) [0x3c0fe000] lui $t7, -8192
+ 6 (I-type) [0xadf30000] sw $s3, 0($t7)
+ 7 (R-type) [0x0294a026] xor $s4, $s4, $s4
+ 8 (I-type) [0x3c14f000] lui $s4, -4096
+ 9 (I-type) [0x201d0400] addi $sp, $zero, 1024
+ a (J-type) [0x0c0000d0] jal 0xd0
+ b (I-type) [0x8e320000] lw $s2, 0($s1)
+ c (I-type) [0x1012fffe] beq $zero, $s2, -2
+ d (I-type) [0x2008001d] addi $t0, $zero, 29
+ e (I-type) [0x11120007] beq $t0, $s2, 7
+ f (I-type) [0x2008001b] addi $t0, $zero, 27
+10 (I-type) [0x11120009] beq $t0, $s2, 9
+11 (I-type) [0x2008001c] addi $t0, $zero, 28
+12 (I-type) [0x1112000b] beq $t0, $s2, 11
+13 (I-type) [0x20080023] addi $t0, $zero, 35
+14 (I-type) [0x1112000d] beq $t0, $s2, 13
+15 (J-type) [0x0800000a] j 0xa
+16 (I-type) [0x20150000] addi $s5, $zero, 0
+17 (I-type) [0x20160010] addi $s6, $zero, 16
+18 (I-type) [0x20170004] addi $s7, $zero, 4
+19 (J-type) [0x08000025] j 0x25
+1a (I-type) [0x20150030] addi $s5, $zero, 48
+1b (I-type) [0x2016fff0] addi $s6, $zero, -16
+1c (I-type) [0x20170004] addi $s7, $zero, 4
+1d (J-type) [0x08000025] j 0x25
+1e (I-type) [0x2015000c] addi $s5, $zero, 12
+1f (I-type) [0x2016fffc] addi $s6, $zero, -4
+20 (I-type) [0x20170010] addi $s7, $zero, 16
+21 (J-type) [0x08000025] j 0x25
+22 (I-type) [0x20150000] addi $s5, $zero, 0
+23 (I-type) [0x20160004] addi $s6, $zero, 4
+24 (I-type) [0x20170010] addi $s7, $zero, 16
+25 (J-type) [0x08000025] j 0x25
+26 (J-type) [0x0c00002a] jal 0x2a
+27 (J-type) [0x0c0000ae] jal 0xae
+28 (I-type) [0x8e2f0000] lw $t7, 0($s1)
+29 (I-type) [0x11f2fffe] beq $t7, $s2, -2
+2a (J-type) [0x0800000a] j 0xa
+2b (I-type) [0xafbf0000] sw $ra, 0($sp)
+2c (I-type) [0x23bd0004] addi $sp, $sp, 4
+2d (R-type) [0x02954020] add $t0, $s4, $s5
+2e (J-type) [0x0c000037] jal 0x37
+2f (R-type) [0x01174020] add $t0, $t0, $s7
+30 (J-type) [0x0c000037] jal 0x37
+31 (R-type) [0x01174020] add $t0, $t0, $s7
+32 (J-type) [0x0c000037] jal 0x37
+33 (R-type) [0x01174020] add $t0, $t0, $s7
+34 (J-type) [0x0c000037] jal 0x37
+35 (I-type) [0x23bdfffc] addi $sp, $sp, -4
+36 (I-type) [0x8fbf0000] lw $ra, 0($sp)
+37 (R-type) [0x03e00008] jr $ra
+38 (I-type) [0xafbf0000] sw $ra, 0($sp)
+39 (I-type) [0x23bd0004] addi $sp, $sp, 4
+3a (R-type) [0x01085024] and $t2, $t0, $t0
+3b (I-type) [0x8d440000] lw $a0, 0($t2)
+3c (R-type) [0x01565020] add $t2, $t2, $s6
+3d (I-type) [0x8d450000] lw $a1, 0($t2)
+3e (R-type) [0x01565020] add $t2, $t2, $s6
+3f (I-type) [0x8d460000] lw $a2, 0($t2)
+40 (R-type) [0x01565020] add $t2, $t2, $s6
+41 (I-type) [0x8d470000] lw $a3, 0($t2)
+42 (J-type) [0x0c000090] jal 0x90
+43 (R-type) [0x016b5826] xor $t3, $t3, $t3
+44 (I-type) [0x10090008] beq $zero, $t1, 8
 45 (I-type) [0x2129ffff] addi $t1, $t1, -1
-46 (I-type) [0x10090008] beq $zero, $t1, 8
+46 (I-type) [0x10090007] beq $zero, $t1, 7
 47 (I-type) [0x2129ffff] addi $t1, $t1, -1
-48 (I-type) [0x10090011] beq $zero, $t1, 17
-49 (J-type) [0x08000069] j 0x69
-4a (J-type) [0x08000069] j 0x69
-4b (I-type) [0x14e6001e] bne $a3, $a2, 30
-4c (R-type) [0x00c63026] xor $a2, $a2, $a2
-4d (I-type) [0x20e70001] addi $a3, $a3, 1
-4e (J-type) [0x08000049] j 0x49
-4f (I-type) [0x14e60004] bne $a3, $a2, 4
-50 (R-type) [0x00c63026] xor $a2, $a2, $a2
+48 (I-type) [0x10090006] beq $zero, $t1, 6
+49 (I-type) [0x2129ffff] addi $t1, $t1, -1
+4a (I-type) [0x1009000c] beq $zero, $t1, 12
+4b (I-type) [0x2129ffff] addi $t1, $t1, -1
+4c (I-type) [0x1009001e] beq $zero, $t1, 30
+4d (J-type) [0x08000086] j 0x86
+4e (J-type) [0x08000086] j 0x86
+4f (I-type) [0x14e60037] bne $a3, $a2, 55
+50 (I-type) [0x11660036] beq $t3, $a2, 54
 51 (I-type) [0x20e70001] addi $a3, $a3, 1
-52 (J-type) [0x0c000073] jal 0x73
-53 (J-type) [0x0800004a] j 0x4a
-54 (I-type) [0x14c50004] bne $a2, $a1, 4
-55 (R-type) [0x00a52826] xor $a1, $a1, $a1
-56 (I-type) [0x20c60001] addi $a2, $a2, 1
-57 (J-type) [0x0c000073] jal 0x73
-58 (J-type) [0x0800004a] j 0x4a
-59 (J-type) [0x08000069] j 0x69
-5a (I-type) [0x14e60004] bne $a3, $a2, 4
-5b (R-type) [0x00c63026] xor $a2, $a2, $a2
-5c (I-type) [0x20e70001] addi $a3, $a3, 1
-5d (J-type) [0x0c000073] jal 0x73
-5e (J-type) [0x0800004e] j 0x4e
-5f (I-type) [0x14c50004] bne $a2, $a1, 4
-60 (R-type) [0x00a52826] xor $a1, $a1, $a1
-61 (I-type) [0x20c60001] addi $a2, $a2, 1
-62 (J-type) [0x0c000073] jal 0x73
-63 (J-type) [0x0800004e] j 0x4e
-64 (I-type) [0x14a40004] bne $a1, $a0, 4
-65 (R-type) [0x00842026] xor $a0, $a0, $a0
-66 (I-type) [0x20a50001] addi $a1, $a1, 1
-67 (J-type) [0x0c000073] jal 0x73
-68 (J-type) [0x0800004e] j 0x4e
-69 (J-type) [0x08000069] j 0x69
-6a (I-type) [0xad470000] sw $a3, 0($t2)
-6b (R-type) [0x01565022] sub $t2, $t2, $s6
-6c (I-type) [0xad460000] sw $a2, 0($t2)
-6d (R-type) [0x01565022] sub $t2, $t2, $s6
-6e (I-type) [0xad450000] sw $a1, 0($t2)
-6f (R-type) [0x01565022] sub $t2, $t2, $s6
-70 (I-type) [0xad440000] sw $a0, 0($t2)
-71 (I-type) [0x23bdfffc] addi $sp, $sp, -4
-72 (I-type) [0x8fbf0000] lw $ra, 0($sp)
-73 (R-type) [0x03e00008] jr $ra
-74 (I-type) [0xafbf0000] sw $ra, 0($sp)
-75 (I-type) [0x23bd0004] addi $sp, $sp, 4
-76 (I-type) [0x20020003] addi $v0, $zero, 3
-77 (I-type) [0x10070005] beq $zero, $a3, 5
-78 (I-type) [0x10060007] beq $zero, $a2, 7
-79 (I-type) [0x10050009] beq $zero, $a1, 9
-7a (I-type) [0x2042ffff] addi $v0, $v0, -1
-7b (I-type) [0x1402fffb] bne $zero, $v0, -5
-7c (J-type) [0x08000085] j 0x85
-7d (R-type) [0x00c63824] and $a3, $a2, $a2
-7e (R-type) [0x00c63026] xor $a2, $a2, $a2
-7f (J-type) [0x08000077] j 0x77
-80 (R-type) [0x00a53024] and $a2, $a1, $a1
-81 (R-type) [0x00a52826] xor $a1, $a1, $a1
-82 (J-type) [0x08000078] j 0x78
-83 (R-type) [0x00842824] and $a1, $a0, $a0
+52 (R-type) [0x00e74824] and $t1, $a3, $a3
+53 (J-type) [0x0c0000c2] jal 0xc2
+54 (R-type) [0x02639820] add $s3, $s3, $v1
+55 (R-type) [0x00c63026] xor $a2, $a2, $a2
+56 (J-type) [0x0800004d] j 0x4d
+57 (I-type) [0x14e60009] bne $a3, $a2, 9
+58 (I-type) [0x1166002e] beq $t3, $a2, 46
+59 (I-type) [0x20e70001] addi $a3, $a3, 1
+5a (R-type) [0x00e75824] and $t3, $a3, $a3
+5b (R-type) [0x00e74824] and $t1, $a3, $a3
+5c (J-type) [0x0c0000c2] jal 0xc2
+5d (R-type) [0x02639820] add $s3, $s3, $v1
+5e (R-type) [0x00a53024] and $a2, $a1, $a1
+5f (R-type) [0x00a52826] xor $a1, $a1, $a1
+60 (J-type) [0x0800004e] j 0x4e
+61 (I-type) [0x14c50008] bne $a2, $a1, 8
+62 (I-type) [0x11650024] beq $t3, $a1, 36
+63 (I-type) [0x20c60001] addi $a2, $a2, 1
+64 (R-type) [0x00c65824] and $t3, $a2, $a2
+65 (R-type) [0x00c64824] and $t1, $a2, $a2
+66 (J-type) [0x0c0000c2] jal 0xc2
+67 (R-type) [0x02639820] add $s3, $s3, $v1
+68 (R-type) [0x00a52826] xor $a1, $a1, $a1
+69 (J-type) [0x0800004e] j 0x4e
+6a (J-type) [0x08000086] j 0x86
+6b (I-type) [0x14e60009] bne $a3, $a2, 9
+6c (I-type) [0x20e70001] addi $a3, $a3, 1
+6d (R-type) [0x00e75824] and $t3, $a3, $a3
+6e (R-type) [0x00e74824] and $t1, $a3, $a3
+6f (J-type) [0x0c0000c2] jal 0xc2
+70 (R-type) [0x02639820] add $s3, $s3, $v1
+71 (R-type) [0x00a53024] and $a2, $a1, $a1
+72 (R-type) [0x00842824] and $a1, $a0, $a0
+73 (R-type) [0x00842026] xor $a0, $a0, $a0
+74 (J-type) [0x08000056] j 0x56
+75 (I-type) [0x14c50008] bne $a2, $a1, 8
+76 (I-type) [0x20c60001] addi $a2, $a2, 1
+77 (R-type) [0x00c65824] and $t3, $a2, $a2
+78 (R-type) [0x00c64824] and $t1, $a2, $a2
+79 (J-type) [0x0c0000c2] jal 0xc2
+7a (R-type) [0x02639820] add $s3, $s3, $v1
+7b (R-type) [0x00842824] and $a1, $a0, $a0
+7c (R-type) [0x00842026] xor $a0, $a0, $a0
+7d (J-type) [0x08000056] j 0x56
+7e (I-type) [0x14a40007] bne $a1, $a0, 7
+7f (I-type) [0x20a50001] addi $a1, $a1, 1
+80 (R-type) [0x00a55824] and $t3, $a1, $a1
+81 (R-type) [0x00a54824] and $t1, $a1, $a1
+82 (J-type) [0x0c0000c2] jal 0xc2
+83 (R-type) [0x02639820] add $s3, $s3, $v1
 84 (R-type) [0x00842026] xor $a0, $a0, $a0
-85 (J-type) [0x08000079] j 0x79
-86 (R-type) [0x01294826] xor $t1, $t1, $t1
-87 (R-type) [0x0004782a] slt $t7, $zero, $a0
-88 (R-type) [0x000f4820] add $t1, $zero, $t7
-89 (R-type) [0x0005782a] slt $t7, $zero, $a1
-8a (R-type) [0x012f4820] add $t1, $t1, $t7
-8b (R-type) [0x0006782a] slt $t7, $zero, $a2
-8c (R-type) [0x012f4820] add $t1, $t1, $t7
-8d (R-type) [0x0007782a] slt $t7, $zero, $a3
-8e (R-type) [0x012f4820] add $t1, $t1, $t7
-8f (I-type) [0x23bdfffc] addi $sp, $sp, -4
-90 (I-type) [0x8fbf0000] lw $ra, 0($sp)
-91 (R-type) [0x03e00008] jr $ra
-92 (I-type) [0xafbf0000] sw $ra, 0($sp)
-93 (I-type) [0x23bd0004] addi $sp, $sp, 4
-94 (R-type) [0x02b5a826] xor $s5, $s5, $s5
-95 (R-type) [0x02d6b026] xor $s6, $s6, $s6
-96 (I-type) [0x20020010] addi $v0, $zero, 16
-97 (R-type) [0x02944024] and $t0, $s4, $s4
-98 (I-type) [0x8d090000] lw $t1, 0($t0)
-99 (R-type) [0x0009782a] slt $t7, $zero, $t1
-9a (R-type) [0x02afa820] add $s5, $s5, $t7
-9b (J-type) [0x0c0000a6] jal 0xa6
-9c (R-type) [0x02c3b020] add $s6, $s6, $v1
-9d (I-type) [0x2042ffff] addi $v0, $v0, -1
-9e (I-type) [0x21080004] addi $t0, $t0, 4
-9f (I-type) [0x1402fff8] bne $zero, $v0, -8
-a0 (I-type) [0xac160000] sw $s6, 0($zero)
-a1 (I-type) [0x22b5fff0] addi $s5, $s5, -16
-a2 (I-type) [0x1015001e] beq $zero, $s5, 30
-a3 (J-type) [0x0c0000b3] jal 0xb3
-a4 (I-type) [0x23bdfffc] addi $sp, $sp, -4
-a5 (I-type) [0x8fbf0000] lw $ra, 0($sp)
-a6 (R-type) [0x03e00008] jr $ra
-a7 (I-type) [0xafbf0000] sw $ra, 0($sp)
-a8 (I-type) [0xafa20004] sw $v0, 4($sp)
-a9 (I-type) [0x23bd0008] addi $sp, $sp, 8
-aa (R-type) [0x00631826] xor $v1, $v1, $v1
-ab (I-type) [0x10090004] beq $zero, $t1, 4
-ac (R-type) [0x01291024] and $v0, $t1, $t1
-ad (I-type) [0x20030001] addi $v1, $zero, 1
-ae (I-type) [0x10020001] beq $zero, $v0, 1
-af (R-type) [0x00031840] sll $v1, $v1, 1
-b0 (I-type) [0x23bdfff8] addi $sp, $sp, -8
-b1 (I-type) [0x8fa20004] lw $v0, 4($sp)
-b2 (I-type) [0x8fbf0000] lw $ra, 0($sp)
-b3 (R-type) [0x03e00008] jr $ra
-b4 (I-type) [0xafbf0000] sw $ra, 0($sp)
-b5 (I-type) [0x23bd0004] addi $sp, $sp, 4
-b6 (I-type) [0x3c08c000] lui $t0, -16384
-b7 (I-type) [0x8d080000] lw $t0, 0($t0)
-b8 (R-type) [0x00084080] sll $t0, $t0, 2
-b9 (R-type) [0x01144020] add $t0, $t0, $s4
-ba (I-type) [0x8d0a0000] lw $t2, 0($t0)
-bb (I-type) [0x140afffa] bne $zero, $t2, -6
-bc (I-type) [0x20090001] addi $t1, $zero, 1
-bd (I-type) [0xad090000] sw $t1, 0($t0)
-be (I-type) [0x23bdfffc] addi $sp, $sp, -4
-bf (I-type) [0x8fbf0000] lw $ra, 0($sp)
-c0 (R-type) [0x03e00008] jr $ra
-c1 (I-type) [0xac140004] sw $s4, 4($zero)
-c2 (J-type) [0x080000c0] j 0xc0
+85 (J-type) [0x08000056] j 0x56
+86 (J-type) [0x08000086] j 0x86
+87 (I-type) [0xad470000] sw $a3, 0($t2)
+88 (R-type) [0x01565022] sub $t2, $t2, $s6
+89 (I-type) [0xad460000] sw $a2, 0($t2)
+8a (R-type) [0x01565022] sub $t2, $t2, $s6
+8b (I-type) [0xad450000] sw $a1, 0($t2)
+8c (R-type) [0x01565022] sub $t2, $t2, $s6
+8d (I-type) [0xad440000] sw $a0, 0($t2)
+8e (I-type) [0x23bdfffc] addi $sp, $sp, -4
+8f (I-type) [0x8fbf0000] lw $ra, 0($sp)
+90 (R-type) [0x03e00008] jr $ra
+91 (I-type) [0xafbf0000] sw $ra, 0($sp)
+92 (I-type) [0x23bd0004] addi $sp, $sp, 4
+93 (I-type) [0x20020003] addi $v0, $zero, 3
+94 (I-type) [0x10070005] beq $zero, $a3, 5
+95 (I-type) [0x10060007] beq $zero, $a2, 7
+96 (I-type) [0x10050009] beq $zero, $a1, 9
+97 (I-type) [0x2042ffff] addi $v0, $v0, -1
+98 (I-type) [0x1402fffb] bne $zero, $v0, -5
+99 (J-type) [0x080000a2] j 0xa2
+9a (R-type) [0x00c63824] and $a3, $a2, $a2
+9b (R-type) [0x00c63026] xor $a2, $a2, $a2
+9c (J-type) [0x08000094] j 0x94
+9d (R-type) [0x00a53024] and $a2, $a1, $a1
+9e (R-type) [0x00a52826] xor $a1, $a1, $a1
+9f (J-type) [0x08000095] j 0x95
+a0 (R-type) [0x00842824] and $a1, $a0, $a0
+a1 (R-type) [0x00842026] xor $a0, $a0, $a0
+a2 (J-type) [0x08000096] j 0x96
+a3 (R-type) [0x01294826] xor $t1, $t1, $t1
+a4 (R-type) [0x0004782a] slt $t7, $zero, $a0
+a5 (R-type) [0x000f4820] add $t1, $zero, $t7
+a6 (R-type) [0x0005782a] slt $t7, $zero, $a1
+a7 (R-type) [0x012f4820] add $t1, $t1, $t7
+a8 (R-type) [0x0006782a] slt $t7, $zero, $a2
+a9 (R-type) [0x012f4820] add $t1, $t1, $t7
+aa (R-type) [0x0007782a] slt $t7, $zero, $a3
+ab (R-type) [0x012f4820] add $t1, $t1, $t7
+ac (I-type) [0x23bdfffc] addi $sp, $sp, -4
+ad (I-type) [0x8fbf0000] lw $ra, 0($sp)
+ae (R-type) [0x03e00008] jr $ra
+af (I-type) [0xafbf0000] sw $ra, 0($sp)
+b0 (I-type) [0x23bd0004] addi $sp, $sp, 4
+b1 (R-type) [0x02b5a826] xor $s5, $s5, $s5
+b2 (R-type) [0x02d6b026] xor $s6, $s6, $s6
+b3 (I-type) [0x20020010] addi $v0, $zero, 16
+b4 (R-type) [0x02944024] and $t0, $s4, $s4
+b5 (I-type) [0x8d090000] lw $t1, 0($t0)
+b6 (R-type) [0x0009782a] slt $t7, $zero, $t1
+b7 (R-type) [0x02afa820] add $s5, $s5, $t7
+b8 (I-type) [0x2042ffff] addi $v0, $v0, -1
+b9 (I-type) [0x21080004] addi $t0, $t0, 4
+ba (I-type) [0x1402fffa] bne $zero, $v0, -6
+bb (I-type) [0x3c0fe000] lui $t7, -8192
+bc (I-type) [0xadf30000] sw $s3, 0($t7)
+bd (I-type) [0x22b5fff0] addi $s5, $s5, -16
+be (I-type) [0x1015001f] beq $zero, $s5, 31
+bf (J-type) [0x0c0000d0] jal 0xd0
+c0 (I-type) [0x23bdfffc] addi $sp, $sp, -4
+c1 (I-type) [0x8fbf0000] lw $ra, 0($sp)
+c2 (R-type) [0x03e00008] jr $ra
+c3 (I-type) [0xafbf0000] sw $ra, 0($sp)
+c4 (I-type) [0xafa20004] sw $v0, 4($sp)
+c5 (I-type) [0x23bd0008] addi $sp, $sp, 8
+c6 (R-type) [0x00631826] xor $v1, $v1, $v1
+c7 (I-type) [0x10090005] beq $zero, $t1, 5
+c8 (R-type) [0x01291024] and $v0, $t1, $t1
+c9 (I-type) [0x20030001] addi $v1, $zero, 1
+ca (R-type) [0x00031840] sll $v1, $v1, 1
+cb (I-type) [0x2042ffff] addi $v0, $v0, -1
+cc (I-type) [0x1402fffd] bne $zero, $v0, -3
+cd (I-type) [0x23bdfff8] addi $sp, $sp, -8
+ce (I-type) [0x8fa20004] lw $v0, 4($sp)
+cf (I-type) [0x8fbf0000] lw $ra, 0($sp)
+d0 (R-type) [0x03e00008] jr $ra
+d1 (I-type) [0xafbf0000] sw $ra, 0($sp)
+d2 (I-type) [0x23bd0004] addi $sp, $sp, 4
+d3 (I-type) [0x3c08c000] lui $t0, -16384
+d4 (I-type) [0x8d080000] lw $t0, 0($t0)
+d5 (R-type) [0x00084080] sll $t0, $t0, 2
+d6 (R-type) [0x01144020] add $t0, $t0, $s4
+d7 (I-type) [0x8d0a0000] lw $t2, 0($t0)
+d8 (I-type) [0x140afffa] bne $zero, $t2, -6
+d9 (I-type) [0x20090001] addi $t1, $zero, 1
+da (I-type) [0xad090000] sw $t1, 0($t0)
+db (I-type) [0x23bdfffc] addi $sp, $sp, -4
+dc (I-type) [0x8fbf0000] lw $ra, 0($sp)
+dd (R-type) [0x03e00008] jr $ra
+de (I-type) [0x3c0fe000] lui $t7, -8192
+df (I-type) [0x2013ffff] addi $s3, $zero, -1
+e0 (I-type) [0xadf30000] sw $s3, 0($t7)
+e1 (J-type) [0x080000dd] j 0xdd

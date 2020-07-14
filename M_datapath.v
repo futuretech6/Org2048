@@ -96,7 +96,7 @@ module M_datapath(input clk,
                .rst(1'b0),
                .Q(MD[31:0]));
 
-    REG32 PC_Reg (.CE((((zero & Branch) & PCWriteCond) | PCWrite) & MIO_ready),
+    REG32 PC_Reg (.CE(((~(zero ^ Branch) & PCWriteCond) | PCWrite) & MIO_ready),
                   .clk(clk),
                   .D(PC_out[31:0]),
                   .rst(reset),

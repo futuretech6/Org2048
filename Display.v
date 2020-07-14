@@ -19,8 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module Display(input rst,
-               input isDead,
-               input [31:0] clkdiv,
+               input clk_VGA,
                input [15:0] SW_OK,
                input [3:0] BlockType,
                output [3:0] BlockID,   // From LeftBottom to RightTop
@@ -43,13 +42,11 @@ module Display(input rst,
     parameter RGB_BG      = 32'hEED;
     
     /* Basic */
-    wire clk_VGA;
     wire [11:0] BGR_Land;
     wire [9:0] X_Addr;
     wire [8:0] Y_Addr;
     reg [11:0] RGB;
-    
-    assign clk_VGA = clkdiv[1];
+
     
     /* Game Logic */
     wire inBlock;

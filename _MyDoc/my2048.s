@@ -3,7 +3,10 @@ Init:
     sll $zero, $zero, 0  # isDead
     # Set const
     lui $s1, 0xD000  # Addr for PS2
-    addi $s3, $zero, 0xF0
+    # addi $s3, $zero, 0xF0
+    xor $s3, $s3, $s3
+    lui $t7, 0xE000  # 0xE0000000: Per_in
+    sw $s3, 0($t7)   # Store score
     xor $s4, $s4, $s4
     lui $s4, 0xF000
     addi $sp, $zero, 0x400
@@ -12,7 +15,7 @@ Init:
 MainLoop:
     lw $s2, 0($s1)
     beq $s2, $zero, MainLoop
-    beq $s2, $s3, MainLoop
+    # beq $s2, $s3, MainLoop  # is duan_ma
 
     # FindDir
     addi $t0, $zero, 0x1D
@@ -57,6 +60,10 @@ MainLoop:
     PressedWSAD:
     jal GroupsCompr
     jal ThingsAfterMove
+
+    WSAD_Wait:
+        lw $t7, 0($s1)
+        beq $s2, $t7, WSAD_Wait  # Same BTN
     j MainLoop
 # MainLoop ends here
 
@@ -94,6 +101,7 @@ ComprOneGroup:  # t0: cur group's 1st elem PHY ADDR
 
     jal PushOneGroup  # t1: cur group's Block Num
 
+    xor $t3, $t3, $t3  # t3: the num that has been compressed yet
     Choose_BlockNum:
         beq $t1, $zero, Case_0Block
         addi $t1, $t1, -1
@@ -106,59 +114,84 @@ ComprOneGroup:  # t0: cur group's 1st elem PHY ADDR
         beq $t1, $zero, Case_4Blocks
 
     Case_0Block:
-        j Done_COG
+        j Done_C1G
 
     Case_1Block:
-        j Done_COG
+        j Done_C1G
 
     Case_2Blocks:
-        bne $a2, $a3, Done_COG
-        xor $a2, $a2, $a2
-        addi $a3, $a3, 1
-        j Case_1Block
+        bne $a2, $a3, Done_C1G
+            beq $a2, $t3, Done_C1G  # Compr yet
+            addi $a3, $a3, 1
+            and $t1, $a3, $a3
+            jal GetScore
+            add $s3, $s3, $v1
+            xor $a2, $a2, $a2
+            j Case_1Block
 
     Case_3Blocks:
         bne $a2, $a3, C3_2ne3
-            xor $a2, $a2, $a2
+            beq $a2, $t3, Done_C1G  # Compr yet
             addi $a3, $a3, 1
-            jal PushOneGroup
+            and $t3, $a3, $a3
+            and $t1, $a3, $a3
+            jal GetScore
+            add $s3, $s3, $v1
+            and $a2, $a1, $a1,
+            xor $a1, $a1, $a1
             j Case_2Blocks
         C3_2ne3:
 
         bne $a1, $a2, C3_1ne2
-            xor $a1, $a1, $a1
+            beq $a1, $t3, Done_C1G  # Compr yet
             addi $a2, $a2, 1
-            jal PushOneGroup
+            and $t3, $a2, $a2
+            and $t1, $a2, $a2
+            jal GetScore
+            add $s3, $s3, $v1
+            xor $a1, $a1, $a1
             j Case_2Blocks
         C3_1ne2:
 
-        j Done_COG
+        j Done_C1G
 
     Case_4Blocks:
         bne $a2, $a3, C4_2ne3
-            xor $a2, $a2, $a2
             addi $a3, $a3, 1
-            jal PushOneGroup
+            and $t3, $a3, $a3
+            and $t1, $a3, $a3
+            jal GetScore
+            add $s3, $s3, $v1
+            and $a2, $a1, $a1
+            and $a1, $a0, $a0
+            xor $a0, $a0, $a0
             j Case_3Blocks
         C4_2ne3:
 
         bne $a1, $a2, C4_1ne2
-            xor $a1, $a1, $a1
             addi $a2, $a2, 1
-            jal PushOneGroup
+            and $t3, $a2, $a2
+            and $t1, $a2, $a2
+            jal GetScore
+            add $s3, $s3, $v1
+            and $a1, $a0, $a0
+            xor $a0, $a0, $a0
             j Case_3Blocks
         C4_1ne2:
 
         bne $a0, $a1, C4_0ne1
-            xor $a0, $a0, $a0
             addi $a1, $a1, 1
-            jal PushOneGroup
+            and $t3, $a1, $a1
+            and $t1, $a1, $a1
+            jal GetScore
+            add $s3, $s3, $v1
+            xor $a0, $a0, $a0
             j Case_3Blocks
         C4_0ne1:
 
-        j Done_COG
+        j Done_C1G
 
-    Done_COG:
+    Done_C1G:
 
     # Save 4 blocks' data from a3~a0 to miobus
     sw $a3, 0($t2)
@@ -181,31 +214,31 @@ PushOneGroup:  # Jusr push(form 0 to 3), no compression
     addi $sp, $sp, 4
 
     addi $v0, $zero, 3  # max 3 pushes: 0->1->2->3
-    loop1_POG:  # if Bi is empty, push B(i-1) to Bi
-        beq $a3, $zero, Push2_POG
-        Done2_POG:
-        beq $a2, $zero, Push1_POG
-        Done1_POG:
-        beq $a1, $zero, Push0_POG
-        Done0_POG:
+    loop_P1G:  # if Bi is empty, push B(i-1) to Bi
+        beq $a3, $zero, Push2_P1G
+        Done2_P1G:
+        beq $a2, $zero, Push1_P1G
+        Done1_P1G:
+        beq $a1, $zero, Push0_P1G
+        Done0_P1G:
 
         addi $v0, $v0, -1
-        bne $v0, $zero, loop1_POG
-        j loop1Done_POG
+        bne $v0, $zero, loop_P1G
+        j loopDone_P1G
 
-        Push2_POG:
+        Push2_P1G:
             and $a3, $a2, $a2
             xor $a2, $a2, $a2
-            j Done2_POG
-        Push1_POG:
+            j Done2_P1G
+        Push1_P1G:
             and $a2, $a1, $a1
             xor $a1, $a1, $a1
-            j Done1_POG
-        Push0_POG:
+            j Done1_P1G
+        Push0_P1G:
             and $a1, $a0, $a0
             xor $a0, $a0, $a0
-            j Done0_POG
-    loop1Done_POG:
+            j Done0_P1G
+    loopDone_P1G:
     # Count Block Num
     xor $t1, $t1, $t1
     slt $t7, $zero, $a0
@@ -236,14 +269,16 @@ ThingsAfterMove:
         slt $t7, $zero, $t1
         add $s5, $s5, $t7
 
-        jal GetScore
-        add $s6, $s6, $v1
+        # jal GetScore
+        # add $s6, $s6, $v1
 
         addi $v0, $v0, -1
         addi $t0, $t0, 4
         bne $v0, $zero, loop1_TAM
 
-    sw $s6, 0($zero) # Store score
+    lui $t7, 0xE000  # 0xE0000000: Per_in
+    # sw $s6, 0($t7)   # Store score
+    sw $s3, 0($t7)   # Store score
 
     addi $s5, $s5, -16
     beq $s5, $zero, DeadLoop  # 16 blocks after compr
@@ -255,7 +290,7 @@ ThingsAfterMove:
     jr $ra
 # ThingsAfterMove ends here
 
-GetScore:
+GetScore:  # no sllv implementation given
     # @ret: v1 = pow(2, t1), but 2^0 = 0(0 score for empty block)
     sw $ra, 0($sp)
     sw $v0, 4($sp)
@@ -267,10 +302,12 @@ GetScore:
     and $v0, $t1, $t1
     addi $v1, $zero, 1
 
-    beq $v0, $zero, Done_GS
+    Loop_GS:
         sll $v1, $v1, 1
-    Done_GS:
+        addi $v0, $v0, -1
+        bne $v0, $zero, Loop_GS
 
+    Done_GS:
     addi $sp, $sp, -8
     lw $v0, 4($sp)
     lw $ra, 0($sp)
@@ -298,5 +335,7 @@ RandGen:
 # RandGen ends here
 
 DeadLoop:
-    sw $s4, 4($zero)
+    lui $t7, 0xE000  # 0xE0000000: Per_in
+    addi $s3, $zero, -1
+    sw $s3, 0($t7)   # Store score
     j DeadLoop

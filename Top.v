@@ -53,6 +53,8 @@ module Top(input clk_100mhz,
     wire [9:0] ram_addr, PS2_key;
     wire [15:0] LED_out, SW_OK;
     wire [31:0] Addr_out, Ai, Bi, counter_out, CPU2IO, Data_in, Data_out, Disp_num, Div, inst, PC, ram_din, ram_dout;
+    reg [31:0] score_hex;
+    wire [31:0] score_bcd;
     
     assign clk_IO = ~clk_CPU;
     
@@ -82,15 +84,20 @@ module Top(input clk_100mhz,
     .counter0_OUT(counter0_out), .counter1_OUT(counter1_out), .counter2_OUT(counter2_out));
     
     /* ---------------- */
+    always @(CPU2IO)
+        if (CPU2IO != 32'hFFFFFFFF)
+            score_hex = CPU2IO;
+    Hex2BCD bcd(.Hex(score_hex), .BCD(score_bcd));
+
     Multi_8CH32 m8ch32 (.clk(clk_IO), .rst(rst), .EN(GPIOEN), .Test(SW_OK[7:5]), .LES(64'b0),
     .point_in({Div[31:0], Div[31:13], State[4:0], 8'b0}), .Disp_num(Disp_num[31:0]), .point_out(point_out[7:0]), .LE_out(blink_out[7:0]),
-    .Data0(score),
+    .Data0((CPU2IO == -1 && Div[27]) ? 32'hdead : score_bcd),
     .data1({2'b0, PC[31:2]}),
     .data2({22'h0, ram_addr}),
     .data3(Data_in[31:0]),
     .data4(Addr_out[31:0]),
     .data5(Data_out[31:0]),
-    .data6(ram_din[31:0]),
+    .data6({22'b0, S2_key}),
     .data7(ram_dout[31:0]));
     
     MCPU cpu (
@@ -99,7 +106,7 @@ module Top(input clk_100mhz,
     );
     
     MIO_BUS miobus (
-    .clk(clk_100mhz), .rst(rst), .BTN(BTN_OK[3:0]), .SW(SW_OK[15:0]), .ps2kb_key(PS2_key), .mem_w(mem_w), .Cpu_data2bus(Data_out[31:0]), .addr_bus(Addr_out[31:0]), .ram_data_out(ram_dout[31:0]), .led_out(LED_out[15:0]), .counter_out(counter_out[31:0]), .counter0_out(counter0_out), .counter1_out(counter1_out), .counter2_out(counter2_out), .BlockID(BlockID),
+    .clk(clk_100mhz), .rst(rst), .BTN(BTN_OK[3:0]), .SW(SW_OK[15:0]), .ps2kb_key(PS2_key), .mem_w(mem_w), .Cpu_data2bus(Data_out[31:0]), .addr_bus(Addr_out[31:0]), .ram_data_out(ram_dout[31:0]), .led_out(LED_out[15:0]), .BlockID(BlockID),
     .BlockType(BlockType), .Cpu_data4bus(Data_in[31:0]), .ram_data_in(ram_din[31:0]), .data_ram_we(ram_we), .ram_addr(ram_addr), .Peripheral_in(CPU2IO[31:0]), .GPIOe0000000_we(GPIOEN), .GPIOf0000000_we(GPIOF0), .counter_we(counter_we)
     );
 
@@ -108,7 +115,7 @@ module Top(input clk_100mhz,
     
     clk_div clkd (.clk(clk_100mhz), .rst(rst), .SW2(SW_OK[2]), .SW_Pause(SW_OK[15]), .clkdiv(Div[31:0]), .Clk_CPU(clk_CPU));
     
-    Display disp(.rst(rst), .clkdiv(Div[31:0]), .SW_OK(SW_OK[15:0]), .BlockType(BlockType), .VGA_R(VGA_R),
+    Display disp(.rst(rst), .clk_VGA(Div[1]), .SW_OK(SW_OK[15:0]), .BlockType(BlockType), .VGA_R(VGA_R),
     .VGA_G(VGA_G), .VGA_B(VGA_B), .VGA_hs(VGA_hs), .VGA_vs(VGA_vs), .BlockID(BlockID));
     
     PS2 ps2(.clk(clk_100mhz), .ready(PS2_ready), .rst(rst), .ps2_clk(PS2_clk), .ps2_data(PS2_data), .data_out(PS2_key));

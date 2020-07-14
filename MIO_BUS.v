@@ -28,10 +28,6 @@ module MIO_BUS(input clk,
                input [31:0] addr_bus,
                input [31:0] ram_data_out,
                input [15:0] led_out,
-               input [31:0] counter_out,
-               input counter0_out,
-               input counter1_out,
-               input counter2_out,
                input [3:0] BlockID,
                output [3:0] BlockType,
                output reg [31:0] Cpu_data4bus,
@@ -44,7 +40,6 @@ module MIO_BUS(input clk,
                output reg [31:0] Peripheral_in);
     reg data_ram_rd,GPIOf0000000_rd,GPIOe0000000_rd,counter_rd,ps2kb_rd,ps2kb_on,rand_rd, block_rd;
     reg [3:0] BlockInfo[0:15];// = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    reg [3:0] BlockType2CPU = 0;
     assign BlockType = {28'b0, BlockInfo[BlockID]};
     initial begin
         randCnt = 0;
@@ -52,16 +47,12 @@ module MIO_BUS(input clk,
     end
     // Block Info
     integer i;
-    always @(posedge clk) begin
+    always @(*) begin
         if(rst)
             for (i = 0; i < 16; i = i + 1)
                 BlockInfo[i] <= 4'b0;
-        else if (addr_bus[31:28] == 4'hF) begin  // CPU IO
-            if(mem_w)
-                BlockInfo[addr_bus[5:2]] <= Cpu_data2bus;   // CPU w
-            else
-                BlockType2CPU = BlockInfo[addr_bus[5:2]];  // CPU r
-        end
+        else if(mem_w && addr_bus[31:28] == 4'hD)
+            BlockInfo[addr_bus[5:2]] <= Cpu_data2bus;
     end
     reg [3:0] randCnt = 0;
     // Rand
@@ -115,54 +106,30 @@ module MIO_BUS(input clk,
                 ram_addr    = addr_bus[11:2];
                 ram_data_in = Cpu_data2bus;
                 data_ram_rd = ~mem_w;
-                // ps2kb_on = 0;
             end
             4'hC: begin  // get random.randint(0, 15)
                 rand_rd = ~mem_w;
-                // ps2kb_on = 0;
             end
             4'hD: begin  // keyborad
-                // if(ps2kb_on == 1'b0 && mem_w == 0)
                 ps2kb_rd = ~mem_w;
-                // ps2kb_on = ~mem_w;
+            end
+            4'hE: begin  // 7Seg
+                GPIOe0000000_we = mem_w;
+                Peripheral_in   = Cpu_data2bus;
+                GPIOe0000000_rd = ~mem_w;
             end
             4'hF: begin  // BlockInfo
-                // block_we = mem_w;
                 block_rd = ~mem_w;
-                // ps2kb_on = 0;
             end
-            // default: begin
-            //     ps2kb_on = 0;
-            // end
-            // 4'hE: begin
-            //     GPIOe0000000_we = mem_w;
-            //     Peripheral_in   = Cpu_data2bus;
-            //     GPIOe0000000_rd = ~mem_w;
-            // end
-            // 4'hF: begin
-            //     if (addr_bus[2]) begin
-            //         counter_we    = mem_w;
-            //         Peripheral_in = Cpu_data2bus;
-            //         counter_rd    = ~mem_w;
-            //     end
-            //     else begin
-            //         GPIOf0000000_we = mem_w;
-            //         Peripheral_in   = Cpu_data2bus;
-            //         GPIOf0000000_rd = ~mem_w;
-            //     end
-            // end
         endcase
     end
     // CPU read
     always @(posedge clk) begin
-        casex({data_ram_rd, GPIOe0000000_rd, counter_rd, GPIOf0000000_rd, ps2kb_rd, rand_rd, block_rd})  /* Procedure */
-            7'b1xxxxxx: Cpu_data4bus = ram_data_out;
-            7'bx1xxxxx: Cpu_data4bus = counter_out;
-            7'bxx1xxxx: Cpu_data4bus = counter_out;
-            7'bxxx1xxx: Cpu_data4bus = {counter0_out,counter1_out,counter2_out,17'b0,BTN[3:0],SW[7:0]};
-            7'bxxxx1xx: Cpu_data4bus = {22'b0, ps2kb_key};
-            7'bxxxxx1x: Cpu_data4bus = {28'b0, myRand};
-            7'bxxxxxx1: Cpu_data4bus = {28'b0, BlockType2CPU};
+        casex({data_ram_rd, ps2kb_rd, rand_rd, block_rd})  /* Procedure */
+            4'b1xxx: Cpu_data4bus = ram_data_out;
+            4'bx1xx: Cpu_data4bus = {22'b0, ps2kb_key};
+            4'bxx1x: Cpu_data4bus = {28'b0, myRand};
+            4'bxxx1: Cpu_data4bus = {28'b0, BlockInfo[addr_bus[5:2]]};
             default: Cpu_data4bus   = 32'h0;
         endcase
     end
