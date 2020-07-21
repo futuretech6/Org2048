@@ -21,7 +21,8 @@
 module Hex2BCD(input [31:0] Hex,
                output reg [31:0] BCD);
 reg [31:0] tmp;
-always @* begin
+always @(Hex) begin
+    BCD        = 0;
     tmp        = Hex;
     BCD[3:0]   = tmp % 10;
     tmp        = (tmp - BCD[3:0]) / 10;
@@ -38,7 +39,7 @@ always @* begin
     BCD[27:24] = tmp % 10;
     tmp        = (tmp - BCD[27:24]) / 10;
     BCD[31:28] = tmp % 10;
-    tmp        = (tmp - BCD[31:28]) / 10;
+    // tmp        = (tmp - BCD[31:28]) / 10;
 end
 
 endmodule

@@ -85,13 +85,14 @@ module Top(input clk_100mhz,
     
     /* ---------------- */
     always @(CPU2IO)
-        if (CPU2IO != 32'hFFFFFFFF)
-            score_hex = CPU2IO;
+        // if (CPU2IO != 32'hFFFFFFFF)
+        //     score_hex = CPU2IO;
+        score_hex = CPU2IO[31:28] != 4'hF ? CPU2IO : score_hex;
     Hex2BCD bcd(.Hex(score_hex), .BCD(score_bcd));
 
     Multi_8CH32 m8ch32 (.clk(clk_IO), .rst(rst), .EN(GPIOEN), .Test(SW_OK[7:5]), .LES(64'b0),
     .point_in({Div[31:0], Div[31:13], State[4:0], 8'b0}), .Disp_num(Disp_num[31:0]), .point_out(point_out[7:0]), .LE_out(blink_out[7:0]),
-    .Data0((CPU2IO == -1 && Div[27]) ? 32'hdead : score_bcd),
+    .Data0((CPU2IO == -1 && Div[27]) ? 32'hdeaddead : score_bcd),
     .data1({2'b0, PC[31:2]}),
     .data2({22'h0, ram_addr}),
     .data3(Data_in[31:0]),

@@ -44,7 +44,13 @@ module Hex2BCD_test;
 		#100;
         
 		// Add stimulus here
-        Hex = 32'd00000012;
+        #100 Hex = 32'd2;
+        #100 Hex = 32'd4;
+        #100 Hex = 32'd8;
+        #100 Hex = 32'd16;
+        #100 Hex = 32'd32;
+        #100 Hex = 32'd36;
+        #100 Hex = 32'd40;
 
 	end
       

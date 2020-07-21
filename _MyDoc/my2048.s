@@ -261,7 +261,6 @@ ThingsAfterMove:
     addi $sp, $sp, 4
 
     xor $s5, $s5, $s5  # NonEmpty
-    xor $s6, $s6, $s6  # Score
     addi $v0, $zero, 16
     and $t0, $s4, $s4  # t0: cur block's PHY ADDR
     loop1_TAM:
@@ -269,15 +268,11 @@ ThingsAfterMove:
         slt $t7, $zero, $t1
         add $s5, $s5, $t7
 
-        # jal GetScore
-        # add $s6, $s6, $v1
-
         addi $v0, $v0, -1
         addi $t0, $t0, 4
         bne $v0, $zero, loop1_TAM
 
     lui $t7, 0xE000  # 0xE0000000: Per_in
-    # sw $s6, 0($t7)   # Store score
     sw $s3, 0($t7)   # Store score
 
     addi $s5, $s5, -16

@@ -11,7 +11,7 @@
   * s0: const 0xC000, Rand
   * s1: const 0xD000, PS2
   * s2: the info of current key pressed
-  * s3: const 0x000000F0
+  * ~~s3: const 0x000000F0~~
   * s3: score, -1 for dead
   * s4: const 0xF0000000
   * **GroupsCompr:**
@@ -34,7 +34,7 @@
         * v0: loop tmp
   * **ThingsAfterMove:**
     * NonEmpty count: s5
-    * Score count: s6
+    * ~~Score count: s6~~
 
 
 Debug:
