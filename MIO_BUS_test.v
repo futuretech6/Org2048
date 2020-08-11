@@ -64,10 +64,6 @@ module MIO_BUS_test;
         .addr_bus(addr_bus), 
         .ram_data_out(ram_data_out), 
         .led_out(led_out), 
-        .counter_out(counter_out), 
-        .counter0_out(counter0_out), 
-        .counter1_out(counter1_out), 
-        .counter2_out(counter2_out), 
         .BlockID(BlockID), 
         .BlockType(BlockType), 
         .Cpu_data4bus(Cpu_data4bus), 
@@ -99,20 +95,42 @@ module MIO_BUS_test;
         counter2_out = 0;
         BlockID = 0;
 
-        // Wait 100 ns for global reset to finish
-        #50;
+        #1;
         rst = 0;
-        #50;
+        #1;
         
+        addr_bus = 32'hC0000000;
+        mem_w = 0;
+        #10;
         mem_w = 1;
+        #10;
+        mem_w = 0;
+        #10;
+        mem_w = 1;
+        #10;
+        mem_w = 0;
+        #10;
+        mem_w = 1;
+        #10;
+        mem_w = 0;
+        #10;
+        mem_w = 1;
+        #10;
+        mem_w = 0;
+        #10;
+        mem_w = 1;
+        #10;
         
-        addr_bus = 32'hF000000C;
-        Cpu_data2bus = 3;
-        
+        mem_w = 0;
+        addr_bus = 32'hD0000000;
+        ps2kb_key = 32'h21;
         #100;
         
-        addr_bus = 32'h0;
-        mem_w = 0;
+        mem_w = 1'b1;
+        addr_bus = 32'hE0000000;
+        Cpu_data2bus = 32'h666;
+        #100;
+        
         
         #5;
         
@@ -123,7 +141,7 @@ module MIO_BUS_test;
     end
     always @*
         for(;1;)
-            #1 clk = ~clk;
+            #5 clk = ~clk;
       
 endmodule
 
